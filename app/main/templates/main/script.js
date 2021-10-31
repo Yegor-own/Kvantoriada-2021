@@ -1,3 +1,16 @@
+function readTextFile(file, callback) {
+    var rawFile = new XMLHttpRequest();
+    rawFile.overrideMimeType("application/json");
+    rawFile.open("GET", file, true);
+    rawFile.onreadystatechange = function() {
+        if (rawFile.readyState === 4 && rawFile.status == "200") {
+            callback(rawFile.responseText);
+        }
+    }
+    rawFile.send(null);
+}
+
+
 let map = L.map('map', {
     minZoom: 2,
     maxZoom:18,
@@ -30,7 +43,20 @@ map.on('click', function(e) {
     console.log(loc);
 })
 
-var imageUrl = '/static/img_3.png',
-    imageBounds = [[56.867029, 60.700769], [56.863884, 60.706230]];
+var data;
+for (let i = 0; i < 1; i++) {
+    $.ajax({
+        dataType: "json",
+        url: '/static/images/log/'+str(i)+'.json',
+        data: data,
+        success: success
+    });
+    // readTextFile('/static/images/log/'+str(i)+'.json', function(text){
+    //     data = JSON.parse(text);
+    //     console.log(data);
+    // });
+    var imageUrl = '/static/images/'+str(i)+'.png',
+        imageBounds = data;
+    L.imageOverlay(imageUrl, imageBounds, opacity = 0.5).addTo(map);
+}
 
-L.imageOverlay(imageUrl, imageBounds, opacity = 0.5).addTo(map);
